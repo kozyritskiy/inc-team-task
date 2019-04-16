@@ -1,0 +1,74 @@
+* {
+    box-sizing: inherit;
+}
+
+*:before,
+*:after {
+    box-sizing: inherit;
+}
+
+body,
+html {
+    width: 100%;
+    height: 100%;
+    position: relative;
+}
+
+html {
+    box-sizing: border-box;
+    
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    color: black;
+    background-color: #f6f7fa;
+}
+
+a {
+    text-decoration: none;
+    display: flex;
+    color: black;
+}
+
+ul {
+    padding: 0;
+    margin: 0;
+    li {
+        list-style: none;
+    }
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    font-weight: normal;
+    margin: 0;
+}
+
+p {
+    margin: 0;
+    padding: 0;
+}
+
+table {
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+
+button {
+    border: 0;
+    cursor: pointer;
+}
+
+img,
+embed,
+object,
+video {
+    max-width: 100%;
+}

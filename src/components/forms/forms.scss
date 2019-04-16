@@ -1,0 +1,56 @@
+.form{
+    padding: 15px 15px;
+    background-color: #F6F7FA;
+    &__title{
+        font-size: 24px;
+        margin-bottom: 10px;
+    }
+    &__fieldset{
+        border: none;
+        margin: 0;
+        padding: 0;
+    }
+    &__group{
+        display: flex;
+        flex-direction: column;
+        margin-bottom: 10px;
+    }
+    &__label{
+        margin-bottom: 5px;
+        color: #8492AF;
+    }
+    &__area{
+        width: 270px;
+        font-family: Arial, Helvetica, sans-serif;
+    }
+    &__input{
+        font-weight: 300;
+        border: none;
+        outline: none;
+        border-bottom: 1px solid #D4D9E4;
+        background-color: #F6F7FA;
+    }
+    &__btns{
+        display: flex;
+        justify-content: center;
+    }
+    &__btn{
+        width: 100px;
+        padding: 10px 10px;
+        border-radius: 5px;
+        color: white;
+        outline: none;
+        &:first-child{
+            margin-right: 10px;
+        }
+        &_color{
+            &_save{
+                background-color: #00c853;
+            }
+            &_back{
+                background-color: #5584ff;
+            }
+        }
+    }
+
+}

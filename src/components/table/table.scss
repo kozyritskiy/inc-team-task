@@ -1,0 +1,48 @@
+.table{
+    width: 100%;
+    
+}
+.tbody{
+    &-ceil{
+        text-align: center;
+        border: 1px solid #d4d9e3;
+        background-color: #fff;
+    }
+}
+.thead{
+    &-ceil{
+        color: #8492af;
+        font-weight: 400;
+        padding-bottom: 10px;
+    }
+}
+.control-ceil{
+    width: 200px;
+    padding: 5px 5px;
+    &__links,&__btns{
+        display: flex;
+    }
+    &__links{
+        margin-bottom: 5px;
+    }
+    &__link,&__btn{
+        display: flex;
+        justify-content: center;
+        width: 90px;
+        text-align: center;
+        padding: 5px 10px;
+        background-color: #5584ff;
+        outline: none;
+        color: white;
+        font-size: 14px;
+        border-radius: 5px;
+        &:first-child{
+            margin-right: 10px;
+        }
+        &_color{
+            &_delete{
+                background-color: tomato;
+            }
+        }
+    }
+}

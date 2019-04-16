@@ -1,0 +1,14 @@
+.members, .tasks{
+    margin-top: 50px;
+    &__header{
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 30px;
+    }
+}
+
+.app__title{
+    text-align: center;
+    margin-top: 50px;
+}
