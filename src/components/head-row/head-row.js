@@ -4,6 +4,7 @@ const capitalize = (str) => str && str[0].toUpperCase() + str.slice(1);
 
 const HeadRow = ({items, control}) => {
     const isAdmin = true;
+    let uniqId = 7000;
     if(items.length === 0){
       return <tr>
         <th>Table is EMPTY</th>
@@ -12,18 +13,18 @@ const HeadRow = ({items, control}) => {
     const {id, ...itemProps } = items[0];
     const propsName = Object.keys(itemProps);
     const elements = propsName.map((propName) => {
-      return <th key={propName} className="thead-ceil">{capitalize(propName)}</th>;
+      return <th key={++uniqId} className="thead-ceil">{capitalize(propName)}</th>;
     });
     let headRow;
     if (isAdmin && control && typeof(control.type) === 'symbol') {
-        headRow = [<th key={id} className="thead-ceil">#</th>, 
+        headRow = [<th key={++uniqId} className="thead-ceil">#</th>, 
                     ...elements,
                     <th key={'control-ceil'} className="thead-ceil">Control</th>,
                     <th key={'control-admin-ceil'} className="thead-ceil">Admin</th>];
     } else {
         !control ? 
-            headRow = [<th key={id} className="thead-ceil">#</th>, ...elements] :
-            headRow = [<th key={id} className="thead-ceil">#</th>, 
+            headRow = [<th key={++uniqId} className="thead-ceil">#</th>, ...elements] :
+            headRow = [<th key={++uniqId} className="thead-ceil">#</th>, 
                         ...elements,
                         <th key={'control-ceil'} className="thead-ceil">Control</th>];
     }

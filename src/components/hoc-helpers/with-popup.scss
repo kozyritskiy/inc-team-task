@@ -11,7 +11,7 @@
   background-color: rgba(0,0,0, 0.5);
 }
 .popup_inner {
-  width: 300px;
+  min-width: 300px;
   position: absolute;
   top: 50%;
   left: 50%;

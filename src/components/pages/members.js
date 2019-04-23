@@ -11,18 +11,24 @@ export default class Members extends Component {
     const {membersManage,
             togglePopup,
             onItemDelete,
-            onItemEdit} = this.props;
+            onItemEdit,
+            getUserTasks,
+            getUserName,
+            getUserProgress} = this.props;
     return (
       <div className='members'>
         <div className='members__header'>
-            <div className='members__count'>MEMBERS COUNT</div>
+            <div className='members__count'>MEMBERS OF INCUBATOR</div>
             <RegBtn togglePopup={togglePopup}/>
         </div>
         <Table data={membersManage}>
             <ControlMembersManage 
                 onItemDelete={onItemDelete}
                 onItemEdit={onItemEdit}
-                togglePopup={togglePopup}/>
+                togglePopup={togglePopup}
+                getUserTasks={getUserTasks}
+                getUserName={getUserName}
+                getUserProgress={getUserProgress}/>
         </Table>
       </div>
     )

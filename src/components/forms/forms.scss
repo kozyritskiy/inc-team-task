@@ -2,13 +2,20 @@
     padding: 15px 15px;
     background-color: #F6F7FA;
     &__title{
+        max-width: 270px;
         font-size: 24px;
         margin-bottom: 10px;
+    }
+    &__fieldsets{
+        display: flex;
     }
     &__fieldset{
         border: none;
         margin: 0;
         padding: 0;
+        &:first-child{
+            margin-right: 20px;
+        }
     }
     &__group{
         display: flex;

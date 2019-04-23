@@ -1,0 +1,21 @@
+.members-task {
+    margin-top: 50px;
+    &__header{
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 30px;
+    }
+    &__link {
+        display: flex;
+        justify-content: center;
+        padding: 10px 5px;
+        width: 100px;
+        text-align: center;
+        background-color: #5584ff;
+        outline: none;
+        color: white;
+        font-size: 14px;
+        border-radius: 5px;
+    }
+}

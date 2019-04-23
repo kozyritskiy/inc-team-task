@@ -3,9 +3,9 @@ import React, { Component } from 'react'
 export default class TaskTrackDetailForm extends Component {
 
     state = {
-        task: '',
-        note: '',
-        date: ''
+        taskName: '',
+        trackNote: '',
+        trackDate: ''
     }
     
     onChange = e => {
@@ -18,9 +18,11 @@ export default class TaskTrackDetailForm extends Component {
 
     onSubmit = e => {
         e.preventDefault();
-        const {onItemAdd,closePopup,creator,typeOfItem,typeOfCurrentItem,clearCurrentItem} = this.props;
-        const {task, date, note} = this.state;
-        onItemAdd(creator,typeOfItem,typeOfCurrentItem,task, note, date);
+        const {onItemAdd,closePopup,creator,typeOfItem,typeOfCurrentItem,clearCurrentItem,currentTrackId} = this.props;
+        console.log(currentTrackId);
+        const {userId,taskId} = currentTrackId;
+        const {taskName, trackDate, trackNote} = this.state;
+        onItemAdd(creator,typeOfItem,typeOfCurrentItem,userId,taskId,taskName, trackNote, trackDate);
         closePopup();
         clearCurrentItem('currentTrack');
     }
@@ -31,56 +33,72 @@ export default class TaskTrackDetailForm extends Component {
         clearCurrentItem('currentTrack');
     }
 
-    componentDidMount(){
-        if (Object.keys(this.props.currentItem).length !== 0) {
-            const { task, date, note } = this.props.currentItem;
+    // componentDidMount(){
+    //     if (Object.keys(this.props.currentItem).length !== 0) {
+    //         const { taskName, trackDate, trackNote} = this.props.currentItem;
+    //         this.setState({
+    //             taskName,
+    //             trackDate,
+    //             trackNote
+    //         });
+    //     }
+    // }
+
+    componentDidUpdate(prevProps) {    
+        if (this.props.currentItem !== prevProps.currentItem) {
+            const { taskName, trackDate, trackNote} = this.props.currentItem;
             this.setState({
-                task,
-                note,
-                date
+                taskName,
+                trackDate,
+                trackNote
             });
-        }
+        };
     }
 
   render() {
 
-    const {task, date, note} = this.state;
+    const {taskName, trackDate, trackNote} = this.state;
+    
 
     return (
-        <form className='form-login' action="" method='' onSubmit={this.onSubmit}>
-            <h3 className='form-title'>Task Track - Create the DB</h3>
-            <fieldset>  
-                <div className='form-group'>
-                    <label htmlFor="track-date">Name</label>
-                    <input type="text" 
+        <form className='form form__track' action="" method='' onSubmit={this.onSubmit}>
+            <h3 className='form__title'>Track - Create the DB</h3>
+            <fieldset className='form__fieldset'>  
+                <div className='form__group'>
+                    <label className='form__label' htmlFor="track-date">Name</label>
+                    <input className='form__input' type="text" 
                         id="track-name" 
-                        name="task" 
-                        value={task}
+                        name="taskName" 
+                        value={taskName}
                         onChange={this.onChange} 
                         required></input>
                 </div>
-                <div className='form-group'>
-                    <label htmlFor="track-date">Date</label>
-                    <input type="date" 
+                <div className='form__group'>
+                    <label className='form__label' htmlFor="track-date">Date</label>
+                    <input className='form__input' type="date" 
                         id="track-date" 
-                        name="date" 
-                        value={date}
+                        name="trackDate" 
+                        value={trackDate}
                         onChange={this.onChange} 
                         required></input>
                 </div>
-                <div className='form-group'>
-                    <label htmlFor="">Note</label>
-                    <textarea rows="4" 
+                <div className='form__group'>
+                    <label className='form__label' htmlFor="">Note</label>
+                    <textarea className='form__input form__area'
+                        rows="4" 
                         cols="50" 
-                        name='note' 
-                        value={note}
+                        name='trackNote' 
+                        value={trackNote}
                         onChange={this.onChange} 
                         required></textarea>
                 </div>
-                <button type='submit'>Save</button>
-                <button onClick={this.onBackToGrid}>Back to grid</button>
             </fieldset>
+            <div className='form__btns'>
+                <button className='form__btn form__btn_color_save' type='submit'>Save</button>
+                <button className='form__btn form__btn_color_back' onClick={this.onBackToGrid}>Back to grid</button>
+            </div>
         </form>
     )
   }
 }
+

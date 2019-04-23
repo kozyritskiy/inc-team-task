@@ -13,7 +13,7 @@ export default class Tasks extends Component {
     return (
       <div className='tasks'>
         <div className='tasks__header'>
-            <div className='tasks__count'>TASKS COUNT</div>
+            <div className='tasks__count'>AVAILABLE TASKS</div>
             <CreateBtn togglePopup={togglePopup}/>
         </div>
         <Table data={tasksManage}>

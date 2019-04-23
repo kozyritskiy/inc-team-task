@@ -7,6 +7,21 @@
         text-align: center;
         border: 1px solid #d4d9e3;
         background-color: #fff;
+        &_color{
+            &_active,&_fail,&_success{
+                width: 100px;
+            }
+            &_fail,&_success{
+                font-weight: 800;
+            }
+            &_fail{
+                color: tomato;
+            }
+            &_success{
+                color: #00c853;
+                
+            }
+        }
     }
 }
 .thead{
@@ -19,13 +34,19 @@
 .control-ceil{
     width: 200px;
     padding: 5px 5px;
-    &__links,&__btns{
+    &__btn{
+       
+    }
+    &__btns{
+        &_admin{
+            margin-top: 5px;
+        }
+    }
+    &__track{
         display: flex;
+        justify-content: center;
     }
-    &__links{
-        margin-bottom: 5px;
-    }
-    &__link,&__btn{
+    &__track-link,&__link,&__btn,&__track-btn{
         display: flex;
         justify-content: center;
         width: 90px;
@@ -36,12 +57,23 @@
         color: white;
         font-size: 14px;
         border-radius: 5px;
+    }
+    &__links,&__btns{
+        display: flex;
+    }
+    &__links{
+        margin-bottom: 5px;
+    }
+    &__link,&__btn{
         &:first-child{
             margin-right: 10px;
         }
         &_color{
             &_delete{
                 background-color: tomato;
+            }
+            &_success{
+                background-color: #00c853;
             }
         }
     }

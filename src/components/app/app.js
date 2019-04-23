@@ -1,12 +1,16 @@
 import React, { Component } from "react";
 
 
-import Entry from '../entry'
-import Table from '../table'
-import Header from '../header'
-import {Members, Tasks} from '../pages'
+import Entry from '../entry';
+import Table from '../table';
+import Header from '../header';
+import {Members, Tasks, MembersTask, Progress, Track} from '../pages';
 
-import {MemberForm,TaskForm,TaskTrackForm} from '../forms'
+import {MemberForm,TaskForm,TaskTrackForm} from '../forms';
+
+import {ControlTaskTracksManage} from '../controls';
+
+import DummyService from '../../services/dummy-service';
 
 // import "./app.scss";
 
@@ -17,50 +21,127 @@ export default class App extends Component {
     maxId = 100;
 
     state = {
+        service: new DummyService(),
         isAdmin: true,
         showPopup: false,
         openRegister: false,
+        openEditReg: false,
+        openEditCrt: false,
         openCreate: false,
         openTrack: false,
+        currentTrackId:{},
+        currentUserTrack: [],
+        currentMemberProgress: [],
+        currentUserName: '',
+        currentUserTasks: [],
         currentMember: {},
         currentTask: {},
         currentTrack:{},
-        membersManage: [
-            { id: 1, name:'ivan ivanov', direction:'Java', education:'BSU',start:'04.12.2017', age:'21'},
-            { id: 2, name:'perya petrov', direction:'.NET', education:'BSUIR',start:'10.12.2017', age:'22'},
-            { id: 21, name:'perya petrov', direction:'.NET', education:'BSUIR',start:'10.12.2017', age:'22'},
-            { id: 22, name:'perya petrov', direction:'.NET', education:'BSUIR',start:'10.12.2017', age:'22'},
-            { id: 23, name:'perya petrov', direction:'.NET', education:'BSUIR',start:'10.12.2017', age:'22'},
-            { id: 24, name:'perya petrov', direction:'.NET', education:'BSUIR',start:'10.12.2017', age:'22'},
-            { id: 25, name:'perya petrov', direction:'.NET', education:'BSUIR',start:'10.12.2017', age:'22'},
-           
-        ],
-        tasksManage:[
-            {id:3, task:'Create the DB', start:'06.12.2017', deadline:'12.12.2017'},
-            {id:4, task:'Implement the procs', start:'12.12.2017', deadline:'20.12.2017'},
-            {id:41, task:'Implement the procs', start:'12.12.2017', deadline:'20.12.2017'},
-            {id:42, task:'Implement the procs', start:'12.12.2017', deadline:'20.12.2017'},
-            {id:43, task:'Implement the procs', start:'12.12.2017', deadline:'20.12.2017'},
-            {id:44, task:'Implement the procs', start:'12.12.2017', deadline:'20.12.2017'},
-            {id:45, task:'Implement the procs', start:'12.12.2017', deadline:'20.12.2017'},
-            {id:46, task:'Implement the procs', start:'12.12.2017', deadline:'20.12.2017'},
-            {id:47, task:'Implement the procs', start:'12.12.2017', deadline:'20.12.2017'},
-
-        ],
-        memberProgress: [
-            {id:5, task:'create the DB', note:'implemented the TaskState table', date:'12.12.2017'},
-            {id:6, task:'create the DB', note:'created the Mamber view', date:'13.12.2017'},
-            {id:7, task:'implement the proc', note:'implemented the calc progress proc', date:'15.12.2017'}
-        ],
-        membersTaskManage:[
-            {id:8, task:'Create the DB', start:'06.12.2017', deadline:'12.12.2017', status: 'Sucess'},
-            {id:9, task:'Implement the procs', start:'12.12.2017', deadline:'20.12.2017', status: 'Active'},
-        ],
-        taskTracksManage: [
-            {id:10, task:'create the DB', note:'Today i was working hard on ...', date:'12.12.2017'},
-            {id:11, task:'Implement the procs', note:`I've finished the proc...`, date:'13.12.2017'},
-        ],
+        membersManage: [],
+        tasksManage:[],
+        memberProgress: [],
+        membersTaskManage:[],
+        taskTracksManage: [],
     }
+
+    componentDidMount(){    
+        const {service} = this.state;
+        const users = service.getUsers();
+        const tasks = service.getTasks();
+        const userTasks = service.getUserTasks();
+        const userProgress = service.getUserProgress();
+        const taskTracks = service.getTaskTracks();
+
+        users.then((res) => {
+            const renameId = res.map((item) =>{
+              const{userId, ...property} = item;
+              return {'id': userId, ...property}
+            });
+            this.setState({ membersManage: renameId});
+        });
+        tasks.then((res) => {
+            const renameId = res.map((item) =>{
+              const{taskId, ...property} = item;
+              return {'id': taskId, ...property}
+            });
+            this.setState({ tasksManage: renameId});
+        });
+        userTasks.then((res) => {
+            const renameId = res.map((item) =>{
+              const{userId,taskId, ...property} = item;
+              return {'id':{'taskId':taskId, 'userId':userId} , ...property}
+            });
+            this.setState({ membersTaskManage: renameId});
+        });
+        userProgress.then((res) => {
+            const renameId = res.map((item) =>{
+                const{userId,taskId, ...property} = item;
+                return {'id':{'taskId':taskId, 'userId':userId} , ...property}
+            });
+            this.setState({ memberProgress: renameId});
+        });
+        taskTracks.then((res) => {
+            const renameId = res.map((item) =>{
+                const{userId,taskId, ...property} = item;
+                return {'id':{'taskId':taskId, 'userId':userId} , ...property}
+            });
+            this.setState({ taskTracksManage: renameId});
+        });
+    }
+
+    getCurrentTrackId = (id) => {
+        this.setState({ currentTrackId: id});
+    }
+
+    getUserTrack = (id) => {
+        console.log(id);
+        
+        const {taskTracksManage} = this.state;
+        console.log(taskTracksManage);
+        
+        const userTrack = taskTracksManage.filter((task) => {
+            return task.id.taskId === id;
+        });
+        console.log(userTrack);
+        this.setState({ currentUserTrack: userTrack});
+    }
+
+    getUserProgress = (id) => {
+        const {memberProgress} = this.state;
+        const userProgress = memberProgress.filter((progress) => {
+            return progress.id.userId === id;
+        });
+        this.setState({ currentMemberProgress: userProgress});
+    }
+
+    getUserTasks = (id) => {
+        const {membersTaskManage} = this.state;
+        const userTasks = membersTaskManage.filter((task) => {
+            return task.id.userId === id;
+        });
+        this.setState({ currentUserTasks: userTasks});
+    }
+
+    getUserName = (id) => {
+        const {membersManage} = this.state;
+        const user = membersManage.find((user) => {
+            return user.id === id;
+        });
+        this.setState({ currentUserName: user.name});
+    }
+
+    toggleStatus = (id,status) => {
+        const {currentUserTasks} = this.state;
+        const task = currentUserTasks.find((task) =>{
+            return task.id.taskId === id
+        });
+        task.state = status;
+        const editTasks = currentUserTasks.map((item) => {
+            return item.id.taskId === task.id.taskId ? task : item;
+        });
+        this.setState({ currentUserTasks: editTasks});
+    }
+
 
     onItemAdd = (creator, typeOfItems, typeOfCurrentItem, ...property) => {
         this.setState((state) => {
@@ -72,7 +153,8 @@ export default class App extends Component {
                 return {[typeOfItems] : [...items]};
               }
             return { [typeOfItems]: [...state[typeOfItems], item] };
-        })
+        });
+
     }
 
     onItemDelete = (id,type) => {
@@ -87,26 +169,48 @@ export default class App extends Component {
     }
 
     onItemEdit = (id, items, typeOfCurrentItem) => {
-        const currentItem = items.find(item => item.id === id);
-        this.setState({ [typeOfCurrentItem] : currentItem });
+        // const currentItem = items.find(item => item.id === id);
+        // console.log(id);
+        const {service} = this.state;
+        let data;
+        typeOfCurrentItem === 'currentMember' ?
+            data = service.getUser(id) :
+                typeOfCurrentItem === 'currentTask' ?
+                    data = service.getTask(id) : data = null;
+        
+        data.then((result) => {
+            let remaneIdObj;
+            if (typeOfCurrentItem === 'currentMember'){
+                const {userId, ...property} = result;
+                remaneIdObj = {id:userId, ...property}
+            }
+            if (typeOfCurrentItem === 'currentTask'){
+                const {taskId, ...property} = result;
+                remaneIdObj = {id:taskId, ...property}
+            }
+            
+            this.setState({ [typeOfCurrentItem]: remaneIdObj});
+        })
+        // this.setState({ [typeOfCurrentItem] : currentItem });
     }
 
     clearCurrentItem = (typeOfCurrentItem) =>{
         this.setState({ [typeOfCurrentItem]: {} });
     }
 
-    createTask(task, start, deadline) {
+    createTask(taskId,name,description, startDate, deadlineDate) {
         return {
-          id: ++this.maxId,
-          task,
-          start,
-          deadline
+          id: taskId,
+          name,
+          description,
+          startDate,
+          deadlineDate
         };
     }
 
-    createMember(name, direction, education, start, age) {
+    createMember(userId, name, direction, education, start, age) {
         return {
-          id: ++this.maxId,
+          id: userId,
           name,
           direction,
           education,
@@ -115,48 +219,47 @@ export default class App extends Component {
         };
     }
 
-    createTrack(task, note, date) {
+    createTrack(userId,taskId,taskName, trackNote, trackDate) {
         return {
-          id: ++this.maxId,
-          task,
-          note,
-          date
+          id:{
+            userId,
+            taskId
+          },
+          taskName,
+          trackNote,
+          trackDate
         };
     }
 
     togglePopup = (form) => {
         this.setState((state) => {
             const showPopup = !state.showPopup;
-            let openRegister,openCreate,openTrack;
-            form === 'member' ? 
-                openRegister = !state.openRegister : 
-                    form === 'task' ? 
-                        openCreate = !state.openCreate :
-                            form === 'track' ? 
-                                openTrack = !state.openTrack : openCreate = false;
-            return {showPopup,openRegister,openCreate,openTrack};
+            let openRegister,openCreate,openTrack,openEditReg,openEditCrt;
+            form === 'editCrt' ? 
+                openEditCrt = !state.openEditCrt : 
+                    form === 'member' ? 
+                        openRegister = !state.openRegister : 
+                            form === 'editReg' ? 
+                                openEditReg = !state.openEditReg : 
+                                    form === 'task' ? 
+                                        openCreate = !state.openCreate :
+                                            form === 'track' ? 
+                                                openTrack = !state.openTrack : openCreate = false;
+            return {showPopup,openRegister,openCreate,openTrack,openEditReg,openEditCrt};
         })
       }
 
     render() {
-
+        // console.log(this.state);
         const {membersManage, tasksManage,
             memberProgress, membersTaskManage,
             taskTracksManage, isAdmin,
             showPopup, openRegister,
             openCreate, openTrack,
             currentMember, currentTask,
-            currentTrack } = this.state;
-
-        let controlTaskManage;
-
-        // isAdmin ? 
-        //     controlTaskManage = 
-        //     <React.Fragment>
-        //         <ControlMembersTaskManage />
-        //         <ControlAdmin />
-        //     </React.Fragment> :
-        //         controlTaskManage = <ControlMembersTaskManage />;
+            currentTrack, openEditReg, currentUserTasks,
+            currentUserName, getUserProgress, currentMemberProgress,
+            currentUserTrack,currentTrackId,openEditCrt } = this.state;
         
         const memberForm = <MemberForm closePopup={this.togglePopup} 
                                 onItemAdd={this.onItemAdd}
@@ -164,7 +267,8 @@ export default class App extends Component {
                                 typeOfCurrentItem='currentMember'
                                 currentItem={currentMember}
                                 clearCurrentItem={this.clearCurrentItem}
-                                creator={this.createMember.bind(this)}/>;
+                                creator={this.createMember.bind(this)}
+                                openEdit={openEditReg} openRegister={openRegister}/>;
 
         const taskForm = <TaskForm closePopup={this.togglePopup} 
                                 onItemAdd={this.onItemAdd}
@@ -172,7 +276,9 @@ export default class App extends Component {
                                 typeOfCurrentItem='currentTask'
                                 currentItem={currentTask}
                                 clearCurrentItem={this.clearCurrentItem}
-                                creator={this.createTask.bind(this)}/> ;
+                                creator={this.createTask.bind(this)}
+                                openEdit={openEditCrt} openCreate={openCreate}
+                                membersManage={membersManage}/> ;
 
         const trackForm = <TaskTrackForm closePopup={this.togglePopup}
                                 onItemAdd={this.onItemAdd}
@@ -180,7 +286,9 @@ export default class App extends Component {
                                 typeOfCurrentItem='currentTrack'
                                 currentItem={currentTrack}
                                 clearCurrentItem={this.clearCurrentItem}
-                                creator={this.createTrack.bind(this)}/>;
+                                creator={this.createTrack.bind(this)}
+                                currentTrackId={currentTrackId}/>;
+
 
         return (
             <Router>
@@ -194,35 +302,40 @@ export default class App extends Component {
                                 <Route path='/members' render={() =><Members membersManage={membersManage}
                                                                         togglePopup={this.togglePopup}
                                                                         onItemDelete={this.onItemDelete}
-                                                                        onItemEdit={this.onItemEdit}/>} />
+                                                                        onItemEdit={this.onItemEdit}
+                                                                        getUserTasks={this.getUserTasks}
+                                                                        getUserName={this.getUserName}
+                                                                        getUserProgress={this.getUserProgress}/>} />
                                 <Route path='/tasks' render={() =><Tasks tasksManage={tasksManage}
                                                                         togglePopup={this.togglePopup}
                                                                         onItemDelete={this.onItemDelete}
                                                                         onItemEdit={this.onItemEdit}/>} />
+                                <Route path='/user-tasks' render={() =><MembersTask data={currentUserTasks} 
+                                                                        currentUserName={currentUserName}
+                                                                        toggleStatus={this.toggleStatus}
+                                                                        togglePopup={this.togglePopup}
+                                                                        getUserTrack={this.getUserTrack}
+                                                                        getCurrentTrackId={this.getCurrentTrackId}/>} />
+                                <Route path='/user-progress' render={() =><Progress memberProgress={currentMemberProgress} 
+                                                                        currentUserName={currentUserName}/>} />
+                                <Route path='/user-track' render={() =><Track currentUserTrack={currentUserTrack} 
+                                                                        onItemDelete={this.onItemDelete}
+                                                                        onItemEdit={this.onItemEdit}
+                                                                        togglePopup={this.togglePopup}/>} />
+                                                                        
+                                                                        
                             </Switch>
                             
-                        
-
-                            {/* <TrackBtn togglePopup={this.togglePopup}/>
-                            <Table data={taskTracksManage}>
-                                <ControlTaskTracksManage 
-                                    onItemDelete={this.onItemDelete}
-                                    onItemEdit={this.onItemEdit}
-                                    togglePopup={this.togglePopup}/>
-                            </Table> */}
-                           
-                            {/* <Table data={memberProgress}/>
-
-                            <Table data={membersTaskManage}>{controlTaskManage}</Table> */}
-
-                           
-
-                            {(showPopup && openRegister) ? 
-                                memberForm :
-                                    (showPopup && openCreate) ? 
-                                        taskForm : 
-                                            (showPopup && openTrack) ? 
-                                                trackForm : null}
+                            {(showPopup && openEditCrt) ? 
+                                taskForm :
+                                    (showPopup && openRegister) ? 
+                                        memberForm :
+                                            (showPopup && openEditReg) ? 
+                                                memberForm :
+                                                    (showPopup && openCreate) ? 
+                                                        taskForm : 
+                                                            (showPopup && openTrack) ? 
+                                                                trackForm : null}
                         </div>
                         </main>
                 </div>
