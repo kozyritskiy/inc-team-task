@@ -1,8 +1,9 @@
 import React, { Component } from 'react'
 
 export default class TaskTrackDetailForm extends Component {
-
+    uniqId = 200;
     state = {
+        taskTrackId: ++ this.uniqId,
         taskName: '',
         trackNote: '',
         trackDate: ''
@@ -21,8 +22,8 @@ export default class TaskTrackDetailForm extends Component {
         const {onItemAdd,closePopup,creator,typeOfItem,typeOfCurrentItem,clearCurrentItem,currentTrackId} = this.props;
         console.log(currentTrackId);
         const {userId,taskId} = currentTrackId;
-        const {taskName, trackDate, trackNote} = this.state;
-        onItemAdd(creator,typeOfItem,typeOfCurrentItem,userId,taskId,taskName, trackNote, trackDate);
+        const {taskName, trackDate, trackNote,taskTrackId} = this.state;
+        onItemAdd(creator,typeOfItem,typeOfCurrentItem,userId,taskId,taskTrackId,taskName, trackNote, trackDate);
         closePopup();
         clearCurrentItem('currentTrack');
     }
@@ -58,11 +59,18 @@ export default class TaskTrackDetailForm extends Component {
   render() {
 
     const {taskName, trackDate, trackNote} = this.state;
-    
+    const {openEdit,openTrack} =this.props;
+    let formTitle;
+
+    openEdit ? 
+        formTitle = `Track - ${taskName}`:
+            openTrack ? 
+                formTitle = `Hi, fill the form please` : 
+                    formTitle = null;
 
     return (
         <form className='form form__track' action="" method='' onSubmit={this.onSubmit}>
-            <h3 className='form__title'>Track - Create the DB</h3>
+            <h3 className='form__title'>{formTitle}</h3>
             <fieldset className='form__fieldset'>  
                 <div className='form__group'>
                     <label className='form__label' htmlFor="track-date">Name</label>

@@ -9,18 +9,20 @@ export default class Tasks extends Component {
     const {tasksManage,
             togglePopup,
             onItemDelete,
-            onItemEdit} = this.props;
+            onItemEdit,
+            getTaskId,clearCurrentItem} = this.props;
     return (
       <div className='tasks'>
         <div className='tasks__header'>
             <div className='tasks__count'>AVAILABLE TASKS</div>
-            <CreateBtn togglePopup={togglePopup}/>
+            <CreateBtn togglePopup={togglePopup} clearCurrentItem={clearCurrentItem}/>
         </div>
         <Table data={tasksManage}>
             <ControlTasksManage 
                 onItemDelete={onItemDelete}
                 onItemEdit={onItemEdit}
-                togglePopup={togglePopup}/>
+                togglePopup={togglePopup}
+                getTaskId={getTaskId}/>
         </Table>
       </div>
     )

@@ -54,16 +54,33 @@ export default class DummyService {
     ];
 
     taskTracks = [
-        {userId:1, taskId:3, taskName:'create the DB', trackNote:'Today i was working hard on ...', trackDate:'2001-05-01'},
-        {userId:1, taskId:3, taskName:'Implement the procs', trackNote:`I've finished the proc...`, trackDate:'2001-05-01'},
-        {userId:1, taskId:4, taskName:'create the note #1', trackNote:'Today i was working easy on ...', trackDate:'2001-05-01'},
-        {userId:1, taskId:4, taskName:'create the note #2', trackNote:`I've finished the work...`, trackDate:'2001-05-01'},
-        {userId:2, taskId:5, taskName:'create the something', trackNote:'Today i was working hard on ...', trackDate:'2001-05-01'},
-        {userId:2, taskId:5, taskName:'Implement the something', trackNote:`I've finished the proc...`, trackDate:'2001-05-01'},
-        {userId:2, taskId:6, taskName:'create the something #1', trackNote:'Today i was working easy on ...', trackDate:'2001-05-01'},
-        {userId:2, taskId:6, taskName:'create the something #2', trackNote:`I've finished the work...`, trackDate:'2001-05-01'},
+        {userId:1, taskId:3, trackId:50, taskName:'create the DB', trackNote:'Today i was working hard on ...', trackDate:'2001-05-01'},
+        {userId:1, taskId:3, trackId:51, taskName:'Implement the procs', trackNote:`I've finished the proc...`, trackDate:'2001-05-01'},
+        {userId:1, taskId:4, trackId:52, taskName:'create the note #1', trackNote:'Today i was working easy on ...', trackDate:'2001-05-01'},
+        {userId:1, taskId:4, trackId:53, taskName:'create the note #2', trackNote:`I've finished the work...`, trackDate:'2001-05-01'},
+        {userId:2, taskId:5, trackId:54, taskName:'create the something', trackNote:'Today i was working hard on ...', trackDate:'2001-05-01'},
+        {userId:2, taskId:5, trackId:55, taskName:'Implement the something', trackNote:`I've finished the proc...`, trackDate:'2001-05-01'},
+        {userId:2, taskId:6, trackId:56, taskName:'create the something #1', trackNote:'Today i was working easy on ...', trackDate:'2001-05-01'},
+        {userId:2, taskId:6, trackId:57, taskName:'create the something #2', trackNote:`I've finished the work...`, trackDate:'2001-05-01'},
     ];
+
+    tracks = [
+        {trackId:50, taskName:'create the DB', trackNote:'Today i was working hard on ...', trackDate:'2001-05-01'},
+        {trackId:51, taskName:'Implement the procs', trackNote:`I've finished the proc...`, trackDate:'2001-05-01'},
+        {trackId:52, taskName:'create the note #1', trackNote:'Today i was working easy on ...', trackDate:'2001-05-01'},
+        {trackId:53, taskName:'create the note #2', trackNote:`I've finished the work...`, trackDate:'2001-05-01'},
+        {trackId:54, taskName:'create the something', trackNote:'Today i was working hard on ...', trackDate:'2001-05-01'},
+        {trackId:55, taskName:'Implement the something', trackNote:`I've finished the proc...`, trackDate:'2001-05-01'},
+        {trackId:56, taskName:'create the something #1', trackNote:'Today i was working easy on ...', trackDate:'2001-05-01'},
+        {trackId:57, taskName:'create the something #2', trackNote:`I've finished the work...`, trackDate:'2001-05-01'},
+    ]
     
+
+    getTrack = async (id) => {
+        return this.tracks.find(item => item.trackId === id.trackId);  
+    }
+
+
     getTaskTracks = async () => {
         return this.taskTracks;
     }
@@ -89,8 +106,7 @@ export default class DummyService {
     };
   
     getUser = async (id) => {
-        const currentUser = this.fullUsers.find(item => item.userId === id);
-        return currentUser;
+        return this.fullUsers.find(item => item.userId === id);
     };
 
   }

@@ -7,9 +7,9 @@ const RegBtn = ({togglePopup}) => {
         <button className='btn-reg' onClick={() => togglePopup('member')}>Register</button>
     )
 };
-const CreateBtn = ({togglePopup}) => {
+const CreateBtn = ({togglePopup,clearCurrentItem}) => {
     return (
-        <button className='btn-crt' onClick={() => togglePopup('task')}>Create</button>
+        <button className='btn-crt' onClick={() => {togglePopup('task');clearCurrentItem('checkedUsers')}}>Create</button>
     )
 };
 const TrackBtn = ({togglePopup}) => {

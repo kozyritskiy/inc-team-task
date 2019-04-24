@@ -8,7 +8,7 @@ export default class TaskDetailForm extends Component {
         description: '',
         startDate: '',
         deadlineDate: '',
-        members: []
+        members: {}
     }
     
     onChange = e => {
@@ -19,36 +19,35 @@ export default class TaskDetailForm extends Component {
         });
     }
 
-    onChangeCheck = e => {
-        const name = e.target.name;
-        const value = e.target.value;
-        
-        const checkMembers = this.state.members.every((item) => {
-            return item !== name  
-        })
-        if(checkMembers){
-            this.setState((state) => {
-                return { members : [...state.members, name] };
-            });
-            
-        }else{
-            const idx = this.state.members.findIndex((item) => item === name);
-            const items = [
-                ...this.state.members.slice(0, idx),
-                ...this.state.members.slice(idx + 1)
-            ];
-           
-            this.setState((state) => {
-                return { members : items };
-            });
+    checkedMembers = (members) => {
+        let result = [];
+        for (let member in members){
+            if(members[member]){
+                result.push(member);
+            }
         }
+        return result;
+    }
+
+
+    onChangeCheck = (e) => {
+        this.setState({
+            members: {...e}
+        });
     }
 
     onSubmit = e => {
         e.preventDefault();
-        const {onItemAdd,closePopup,creator,typeOfItem,typeOfCurrentItem,clearCurrentItem} = this.props;
+        const {onItemAdd,closePopup,creator,typeOfItem,typeOfCurrentItem,clearCurrentItem,addUserTasks} = this.props;
         const {name, description, startDate, deadlineDate, taskId, members} = this.state;
         onItemAdd(creator,typeOfItem,typeOfCurrentItem, taskId,name, description,startDate, deadlineDate);
+        const checkedMembers = this.checkedMembers(members);
+        if(checkedMembers.length !== 0){
+            checkedMembers.forEach(member => {
+                const task = {id: {userId: +member,taskId},taskName:name,startDate,deadlineDate, state: 'Active'};
+                addUserTasks(task);
+            });
+        }
         closePopup();
         clearCurrentItem('currentTask');
     }
@@ -60,16 +59,18 @@ export default class TaskDetailForm extends Component {
     }
 
 
-    // componentDidMount(){
-    //     if (Object.keys(this.props.currentItem).length !== 0) {
-    //         const { task, start, deadline } = this.props.currentItem;
-    //         this.setState({
-    //             task,
-    //             start,
-    //             deadline
-    //         });
-    //     }
-    // }
+    componentDidMount(){
+        const {checkedUsers} = this.props;
+        this.setState({members:checkedUsers});
+        // if (Object.keys(this.props.currentItem).length !== 0) {
+        //     const { task, start, deadline } = this.props.currentItem;
+        //     this.setState({
+        //         task,
+        //         start,
+        //         deadline
+        //     });
+        // }
+    }
 
     componentDidUpdate(prevProps) {    
         if (this.props.currentItem !== prevProps.currentItem) {
@@ -86,7 +87,7 @@ export default class TaskDetailForm extends Component {
     
     
   render() {
-    console.log(this.state.members);
+    // console.log(this.state.members);
     const {name, description, startDate, deadlineDate, members} = this.state;
 
     const {openEdit, openCreate,membersManage} = this.props;
@@ -100,6 +101,7 @@ export default class TaskDetailForm extends Component {
                     formTitle = null;
 
     return (
+       
         <form className='form form__task' action="" method='' onSubmit={this.onSubmit}>
             <h3 className='form__title'>{formTitle}</h3>
             <fieldset className='form__fieldset'>
@@ -148,7 +150,9 @@ export default class TaskDetailForm extends Component {
                 </div>
                 <div className='form__group'>
                     <h5>Members</h5>
-                    <CheckMembers membersManage={membersManage} members={members} onChange={this.onChangeCheck}/>
+                    <CheckMembers membersManage={membersManage} 
+                                    members={members} 
+                                    onChange={this.onChangeCheck}/>
                 </div>             
                 
             </fieldset>
@@ -162,19 +166,59 @@ export default class TaskDetailForm extends Component {
 }
 
 
-const CheckMembers = ({membersManage,onChange}) => {
-    console.log(membersManage);
+
+const CheckMembers = ({membersManage,onChange, members}) => {
+    
+    let checkMembers = membersManage.reduce((result,{id}) => {
+        return {...result,[id] : !!members[id]}
+    },{});
+    const checkMembersChange = (id) => () => {
+        checkMembers[id] = !checkMembers[id];
+        onChange(checkMembers)
+    }
     
     const checks = membersManage.map((member) => {
         const {name,id} = member;
         
         return  <div key={id}>
                     <label htmlFor="">{name}</label>
-                    <input type="checkbox" name={id} onChange={onChange}/><br/>
+                    <input type="checkbox" name={id} 
+                        checked={checkMembers[id]} 
+                        onChange={checkMembersChange(id)}/><br/>
                 </div> ;
       });
-
+      
     return (
       <div className='members-check-list'>{checks}</div>
     )
   }
+
+//   onChange(e = {}, taskId) {
+//     this.state.members = this.state.members.map(member => {
+//        const isChecked = e[member.id];
+//        const isPreviousCheckedValue = !!member.tasks.find(id => id === taskId);
+//        if (isChecked !== isPreviousCheckedValue) {
+//            const tasks = isChecked ? [...member.tasks, taksId] : member.tasks.filter(taks => task !== taskId);
+//            return {...member, tasks}
+//        }
+//        return member;	
+//    })
+//    }
+   
+   
+//    ({taskId, managedMembers, onChange})
+//    // tasks - массив из айдишек тасок, привязанных к юзеру на момент открытия попапа
+//    let checksdMembers = managedMembers.reduce((result, {id, tasks}) => {
+//        const = defaultIsChecked = tasks.find((membertaskId) => memberTaskId === taskId) !== undefined;
+//        return {...result, [id]: defaultIsChecked};
+//    }, {})
+   
+   
+   
+//    ({task, managedMembers, onChange})
+//    // users - массив из айдишек юзеров, привязанных к такске на момент открытия попапа
+//    let checksdMembers = managedMembers.reduce((result, {id}) => {
+//        const {users = []} = task;
+//        const = defaultIsChecked = users.find((userId) => userId === id) !== undefined;
+//        return {...result, [id]: defaultIsChecked};
+//    }, {})

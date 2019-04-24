@@ -14,10 +14,10 @@ const ControlMembersManage = ({onItemDelete,onItemEdit,id,togglePopup,dataItems,
     </td>);
   };
 
-const ControlTasksManage = ({onItemDelete,onItemEdit,id,togglePopup,dataItems}) => {
+const ControlTasksManage = ({onItemDelete,onItemEdit,id,togglePopup,dataItems,getTaskId}) => {
     return (<td className='control-ceil tbody-ceil'>
                 <div className='control-ceil__btns'>
-                    <button className='control-ceil__btn' onClick={() => {togglePopup('editCrt');onItemEdit(id, dataItems,'currentTask')}}>Edit</button>
+                    <button className='control-ceil__btn' onClick={() => {togglePopup('editCrt');onItemEdit(id, dataItems,'currentTask');getTaskId(id)}}>Edit</button>
                     <button className='control-ceil__btn control-ceil__btn_color_delete' onClick={() => onItemDelete(id, 'tasksManage')}>Delete</button>
                 </div>
             </td>);
@@ -26,8 +26,8 @@ const ControlTasksManage = ({onItemDelete,onItemEdit,id,togglePopup,dataItems}) 
 const ControlTaskTracksManage = ({onItemDelete,onItemEdit,id,togglePopup,dataItems}) => {
     return (<td className='control-ceil tbody-ceil'>
         <div className='control-ceil__btns'>
-                <button className='control-ceil__btn' onClick={() => {togglePopup('track');onItemEdit(id, dataItems,'currentTrack')}}>Edit</button>
-                <button className='control-ceil__btn control-ceil__btn_color_delete' onClick={() => onItemDelete(id, 'taskTracksManage')}>Delete</button>
+                <button className='control-ceil__btn' onClick={() => {togglePopup('editTrack');onItemEdit(id, dataItems,'currentTrack')}}>Edit</button>
+                <button className='control-ceil__btn control-ceil__btn_color_delete' onClick={() => {onItemDelete(id, 'taskTracksManage');onItemDelete(id, 'currentUserTrack')}}>Delete</button>
         </div>
     </td>);
 };

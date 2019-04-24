@@ -29,6 +29,7 @@ export default class App extends Component {
         openEditCrt: false,
         openCreate: false,
         openTrack: false,
+        openEditTrack: false,
         currentTrackId:{},
         currentUserTrack: [],
         currentMemberProgress: [],
@@ -42,6 +43,7 @@ export default class App extends Component {
         memberProgress: [],
         membersTaskManage:[],
         taskTracksManage: [],
+        checkedUsers: {}
     }
 
     componentDidMount(){    
@@ -82,8 +84,8 @@ export default class App extends Component {
         });
         taskTracks.then((res) => {
             const renameId = res.map((item) =>{
-                const{userId,taskId, ...property} = item;
-                return {'id':{'taskId':taskId, 'userId':userId} , ...property}
+                const{userId,taskId,trackId, ...property} = item;
+                return {'id':{'taskId':taskId, 'userId':userId, 'trackId':trackId} , ...property}
             });
             this.setState({ taskTracksManage: renameId});
         });
@@ -94,15 +96,10 @@ export default class App extends Component {
     }
 
     getUserTrack = (id) => {
-        console.log(id);
-        
         const {taskTracksManage} = this.state;
-        console.log(taskTracksManage);
-        
         const userTrack = taskTracksManage.filter((task) => {
             return task.id.taskId === id;
         });
-        console.log(userTrack);
         this.setState({ currentUserTrack: userTrack});
     }
 
@@ -142,6 +139,22 @@ export default class App extends Component {
         this.setState({ currentUserTasks: editTasks});
     }
 
+    getTaskId = (id) => {
+        const {membersTaskManage} = this.state;
+        const checkedUsers = {};
+        membersTaskManage.forEach((task) => {
+            if(task.id.taskId === id){
+                checkedUsers[task.id.userId] = true;
+            }
+        });
+        this.setState({ checkedUsers });
+    }   
+
+    addUserTasks = (task) => {
+        this.setState((state) => {
+            return { membersTaskManage : [...state.membersTaskManage,task] };
+        });
+    }
 
     onItemAdd = (creator, typeOfItems, typeOfCurrentItem, ...property) => {
         this.setState((state) => {
@@ -173,12 +186,18 @@ export default class App extends Component {
         // console.log(id);
         const {service} = this.state;
         let data;
-        typeOfCurrentItem === 'currentMember' ?
-            data = service.getUser(id) :
-                typeOfCurrentItem === 'currentTask' ?
-                    data = service.getTask(id) : data = null;
+        
+        
+        typeOfCurrentItem === 'currentTrack' ?
+            data = service.getTrack(id) :
+                typeOfCurrentItem === 'currentMember' ?
+                    data = service.getUser(id) :
+                        typeOfCurrentItem === 'currentTask' ?
+                            data = service.getTask(id) : data = null;
         
         data.then((result) => {
+           
+            console.log(result);
             let remaneIdObj;
             if (typeOfCurrentItem === 'currentMember'){
                 const {userId, ...property} = result;
@@ -187,6 +206,10 @@ export default class App extends Component {
             if (typeOfCurrentItem === 'currentTask'){
                 const {taskId, ...property} = result;
                 remaneIdObj = {id:taskId, ...property}
+            }
+            if (typeOfCurrentItem === 'currentTrack'){
+                const {trackId, ...property} = result;
+                remaneIdObj = {id:trackId, ...property}
             }
             
             this.setState({ [typeOfCurrentItem]: remaneIdObj});
@@ -219,11 +242,12 @@ export default class App extends Component {
         };
     }
 
-    createTrack(userId,taskId,taskName, trackNote, trackDate) {
+    createTrack(userId,taskId,trackId,taskName, trackNote, trackDate) {
         return {
           id:{
             userId,
-            taskId
+            taskId,
+            trackId
           },
           taskName,
           trackNote,
@@ -234,32 +258,34 @@ export default class App extends Component {
     togglePopup = (form) => {
         this.setState((state) => {
             const showPopup = !state.showPopup;
-            let openRegister,openCreate,openTrack,openEditReg,openEditCrt;
-            form === 'editCrt' ? 
-                openEditCrt = !state.openEditCrt : 
-                    form === 'member' ? 
-                        openRegister = !state.openRegister : 
-                            form === 'editReg' ? 
-                                openEditReg = !state.openEditReg : 
-                                    form === 'task' ? 
-                                        openCreate = !state.openCreate :
-                                            form === 'track' ? 
-                                                openTrack = !state.openTrack : openCreate = false;
-            return {showPopup,openRegister,openCreate,openTrack,openEditReg,openEditCrt};
+            let openRegister,openCreate,openTrack,openEditReg,openEditCrt,openEditTrack;
+            form === 'editTrack' ? 
+                openEditTrack = !state.openEditTrack : 
+                    form === 'editCrt' ? 
+                        openEditCrt = !state.openEditCrt : 
+                            form === 'member' ? 
+                                openRegister = !state.openRegister : 
+                                    form === 'editReg' ? 
+                                        openEditReg = !state.openEditReg : 
+                                            form === 'task' ? 
+                                                openCreate = !state.openCreate :
+                                                    form === 'track' ? 
+                                                        openTrack = !state.openTrack : openCreate = false;
+            return {showPopup,openRegister,openCreate,openTrack,openEditReg,openEditCrt,openEditTrack};
         })
       }
 
     render() {
-        // console.log(this.state);
+        console.log(this.state);
         const {membersManage, tasksManage,
             memberProgress, membersTaskManage,
             taskTracksManage, isAdmin,
             showPopup, openRegister,
             openCreate, openTrack,
-            currentMember, currentTask,
+            currentMember, currentTask, openEditTrack,
             currentTrack, openEditReg, currentUserTasks,
             currentUserName, getUserProgress, currentMemberProgress,
-            currentUserTrack,currentTrackId,openEditCrt } = this.state;
+            currentUserTrack,currentTrackId,openEditCrt,checkedUsers } = this.state;
         
         const memberForm = <MemberForm closePopup={this.togglePopup} 
                                 onItemAdd={this.onItemAdd}
@@ -278,7 +304,9 @@ export default class App extends Component {
                                 clearCurrentItem={this.clearCurrentItem}
                                 creator={this.createTask.bind(this)}
                                 openEdit={openEditCrt} openCreate={openCreate}
-                                membersManage={membersManage}/> ;
+                                membersManage={membersManage}
+                                addUserTasks={this.addUserTasks}
+                                checkedUsers={checkedUsers}/> ;
 
         const trackForm = <TaskTrackForm closePopup={this.togglePopup}
                                 onItemAdd={this.onItemAdd}
@@ -287,7 +315,8 @@ export default class App extends Component {
                                 currentItem={currentTrack}
                                 clearCurrentItem={this.clearCurrentItem}
                                 creator={this.createTrack.bind(this)}
-                                currentTrackId={currentTrackId}/>;
+                                currentTrackId={currentTrackId}
+                                openEdit={openEditTrack} openTrack={openTrack}/>;
 
 
         return (
@@ -309,7 +338,9 @@ export default class App extends Component {
                                 <Route path='/tasks' render={() =><Tasks tasksManage={tasksManage}
                                                                         togglePopup={this.togglePopup}
                                                                         onItemDelete={this.onItemDelete}
-                                                                        onItemEdit={this.onItemEdit}/>} />
+                                                                        onItemEdit={this.onItemEdit}
+                                                                        getTaskId={this.getTaskId}
+                                                                        clearCurrentItem={this.clearCurrentItem}/>} />
                                 <Route path='/user-tasks' render={() =><MembersTask data={currentUserTasks} 
                                                                         currentUserName={currentUserName}
                                                                         toggleStatus={this.toggleStatus}
@@ -326,16 +357,18 @@ export default class App extends Component {
                                                                         
                             </Switch>
                             
-                            {(showPopup && openEditCrt) ? 
-                                taskForm :
-                                    (showPopup && openRegister) ? 
-                                        memberForm :
-                                            (showPopup && openEditReg) ? 
+                            {(showPopup && openEditTrack) ? 
+                                trackForm :
+                                    (showPopup && openEditCrt) ? 
+                                        taskForm :
+                                            (showPopup && openRegister) ? 
                                                 memberForm :
-                                                    (showPopup && openCreate) ? 
-                                                        taskForm : 
-                                                            (showPopup && openTrack) ? 
-                                                                trackForm : null}
+                                                    (showPopup && openEditReg) ? 
+                                                        memberForm :
+                                                            (showPopup && openCreate) ? 
+                                                                taskForm : 
+                                                                    (showPopup && openTrack) ? 
+                                                                        trackForm : null}
                         </div>
                         </main>
                 </div>
