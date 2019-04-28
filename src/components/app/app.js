@@ -4,7 +4,7 @@ import React, { Component } from "react";
 import Entry from '../entry';
 import Table from '../table';
 import Header from '../header';
-import {Members, Tasks, MembersTask, Progress, Track} from '../pages';
+import {Members, Tasks, MembersTask, Progress, Track, Welcome} from '../pages';
 
 import {MemberForm,TaskForm,TaskTrackForm} from '../forms';
 
@@ -12,7 +12,7 @@ import {ControlTaskTracksManage} from '../controls';
 
 import DummyService from '../../services/dummy-service';
 
-// import "./app.scss";
+import "./app.scss";
 
 import {BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom';
 
@@ -43,7 +43,7 @@ export default class App extends Component {
         memberProgress: [],
         membersTaskManage:[],
         taskTracksManage: [],
-        checkedUsers: {}
+        checkedUsers: {},
     }
 
     componentDidMount(){    
@@ -275,6 +275,8 @@ export default class App extends Component {
         })
       }
 
+    
+
     render() {
         console.log(this.state);
         const {membersManage, tasksManage,
@@ -318,6 +320,10 @@ export default class App extends Component {
                                 currentTrackId={currentTrackId}
                                 openEdit={openEditTrack} openTrack={openTrack}/>;
 
+        
+        // const animation = setInterval(this.changeTriangles,2000);
+       
+        
 
         return (
             <Router>
@@ -326,7 +332,7 @@ export default class App extends Component {
                         <Header />
                         <div className='container'>
                             <Switch>
-                                <Route path='/' render={() =>(<h2 className='app__title'>Welcome to App</h2>)} exact />
+                                <Route path='/' render={() =><Welcome />} exact />
                                 
                                 <Route path='/members' render={() =><Members membersManage={membersManage}
                                                                         togglePopup={this.togglePopup}
@@ -376,6 +382,13 @@ export default class App extends Component {
         )
     }
 }
+
+
+
+
+
+
+
 
 
 
