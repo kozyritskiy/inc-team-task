@@ -1,6 +1,10 @@
 .header {
     height: 75px;
     background-color: #0e1a35;
+    &__logo-title{
+      color: white;
+      font-weight: 700;
+    }
     &__container{
         display: flex;
         justify-content: space-between;
